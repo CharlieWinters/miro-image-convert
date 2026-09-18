@@ -164,12 +164,13 @@ async function convertAll(items, options, token) {
 
 function describe(result) {
   const from = labelForMime(result.sourceMime);
+  const to = labelForMime(result.blob.type);
   const delta = `${formatBytes(result.sourceBytes)} → ${formatBytes(result.blob.size)}`;
   const resized =
     result.width !== result.sourceWidth || result.height !== result.sourceHeight
       ? `, resized to ${result.width}×${result.height}`
       : '';
-  return `${from} → ${result.blob.type || 'output'}, ${delta}${resized}`;
+  return `${from} → ${to}, ${delta}${resized}`;
 }
 
 async function run(mode) {
