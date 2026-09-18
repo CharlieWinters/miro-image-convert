@@ -67,6 +67,16 @@ Robustness matters more than raw speed here, so:
   for being too large.
 - Runs are capped at 200 images to keep one click from locking up the tab.
 
+## Hosted build
+
+The app is deployed to GitHub Pages from `main`:
+
+<https://charliewinters.github.io/miro-image-convert/>
+
+That URL is the **App URL / `sdkUri`** to register in the Developer Dashboard
+(with scopes `boards:read` and `boards:write`). Pages is fine for hosting a
+Miro app; only Marketplace submission requires somewhere else.
+
 ## Install (development)
 
 1. `npm install`
@@ -87,7 +97,8 @@ to the toolbar icon if unavailable.
 `npm run build` emits `dist/`. Asset paths are relative and filenames are
 unhashed, so it can be served from any static host including a GitHub Pages
 subpath. The included workflow (`.github/workflows/deploy.yml`) deploys `dist/`
-to Pages on push to `main`.
+to Pages on push to `main`, and fails the build if an entry point or its bundle
+is missing rather than publishing a version that boards cannot load.
 
 After deploying, **update `sdkUri` in the Developer Dashboard** to the deployed
 HTTPS URL, or the board will keep loading localhost. The dashboard is

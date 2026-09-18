@@ -1,9 +1,15 @@
-# Paste this into the Developer Dashboard (the dashboard is authoritative).
-# Set sdkUri to http://localhost:3000 while developing, then to the deployed
-# URL. The app only reads and writes board items; nothing leaves the browser.
+# Paste this into the Developer Dashboard (the dashboard is authoritative —
+# editing this file alone changes nothing).
+#
+# sdkUri must match wherever the app is actually served. It points at the
+# GitHub Pages deployment below; swap it for http://localhost:3000 while
+# developing locally, and back again afterwards.
+#
+# The app only reads and writes board items. Conversion happens in the
+# browser, so no image data leaves the user's machine.
 appName: Image Format Converter
 sdkVersion: SDK_V2
-sdkUri: "http://localhost:3000"
+sdkUri: "https://charliewinters.github.io/miro-image-convert/"
 scopes:
   - boards:read
   - boards:write
