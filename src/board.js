@@ -164,3 +164,45 @@ export async function placeInFrame(entries, format, sourceItems) {
 
   return {frame, created};
 }
+
+/**
+ * Write converted images to the board, honouring the placement mode. Shared by
+ * the panel and the one-click context-menu actions so both place items the
+ * same way. Per-item placement failures are collected rather than thrown, so
+ * one rejected image cannot strand the rest of a batch.
+ *
+ * @param entries [{item, result, fileName}]
+ */
+export async function writeConverted(entries, format, placement, {onProgress, token} = {}) {
+  const created = [];
+  const failures = [];
+  let written = 0;
+
+  if (placement === 'frame') {
+    const {created: items} = await placeInFrame(
+      entries.map(({result, fileName}) => ({result, fileName})),
+      format,
+      entries.map(({item}) => item),
+    );
+    created.push(...items);
+    written = entries.length;
+    onProgress?.(written, entries.length);
+    return {created, written, failures};
+  }
+
+  for (const entry of entries) {
+    if (token?.cancelled) break;
+    try {
+      created.push(
+        ...(await placeBelowOriginal(entry.item, entry.result, format, entry.fileName)),
+      );
+      written++;
+    } catch (error) {
+      failures.push({fileName: entry.fileName, message: error.message});
+    }
+    entry.result.blob = null; // let the encoded bytes be collected
+    onProgress?.(written, entries.length);
+  }
+
+  return {created, written, failures};
+}

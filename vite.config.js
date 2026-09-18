@@ -34,5 +34,9 @@ export default defineConfig({
   },
   server: {
     port: 3000,
+    // Fail instead of quietly moving to the next free port. The manifest pins
+    // sdkUri to localhost:3000, so a silent move means the board iframe loads
+    // whatever else is on 3000 instead of this app.
+    strictPort: true,
   },
 });

@@ -110,6 +110,52 @@ and panel read as the same app. The colour version deliberately repeats that
 composition rather than showing a richer source-to-target scene: it is rendered
 at around 32px in the panel, where extra detail turns to mush.
 
+## Right-click actions
+
+Selecting images and right-clicking gives four entries, registered as Web SDK
+custom actions in the headless iframe:
+
+| Entry | Does |
+|---|---|
+| **Convert to PNG** | One click: adds a PNG copy of every selected image |
+| **Convert to JPEG** | Same, as JPEG |
+| **Convert to WebP** | Same, as WebP |
+| **Convert image format…** | Opens the panel, for anything needing options |
+
+The one-click entries have no UI of their own, so they reuse whatever the panel
+was last set to — quality, background colour, resize cap and placement. The
+panel persists those to `localStorage`, which the headless iframe shares with
+it because both are served from the same origin. There is no progress bar out
+there either, so each action brackets its work with board notifications and
+points at the panel when something fails.
+
+Four entries is not an arbitrary choice — custom actions come with real
+constraints, and they shape the design:
+
+- **"There is a maximum of 4 custom actions per app."** Registering a fifth
+  throws and only the first four work. That is the whole budget: three formats
+  plus the panel opener. BMP and AVIF are panel-only for exactly this reason.
+- **Private apps only.** Custom actions are "only supported for non-public apps
+  that will be distributed privately via a shareable authorization link", so an
+  app using them cannot go to the Marketplace. That suits this app, which is
+  installed via the link above.
+- **Registration must happen in the headless iframe**, not a panel or modal, or
+  it throws. Hence all of it living in `src/index.js`.
+- **`predicate` is evaluated per item and every selected item must match.** With
+  `{type: 'image'}`, mixing a sticky note into the selection hides the entries;
+  select images only. (The handler filters non-images anyway, as a selection can
+  change between menu and click.)
+- **Selections over 100 items hide the action**, so the one-click route tops out
+  there. The panel handles up to 200.
+- **Valid `ui.icon` values are a fixed Miro set** that the docs publish only as a
+  rendered HTML block, so the names are not knowable from the text reference.
+  `src/index.js` therefore tries the plausible names and falls back to
+  `chat-two`, the one value the docs use by example, so an action always
+  registers with *some* icon.
+
+All of it is best-effort: every registration failure is caught and ignored, so
+if the API changes or the app is ever made public, the toolbar icon still works.
+
 ## Install (development)
 
 1. `npm install`

@@ -3,7 +3,8 @@ import './assets/style.css';
 
 import {supportedFormats, formatById, labelForMime} from './formats.js';
 import {convertItem, runPool} from './convert.js';
-import {placeBelowOriginal, placeInFrame} from './board.js';
+import {writeConverted} from './board.js';
+import {loadPrefs, savePrefs as persistPrefs} from './prefs.js';
 import {zipBlob, triggerDownload, revokeAll} from './download.js';
 import {formatBytes, baseNameFor, uniqueName, escapeHtml} from './util.js';
 
@@ -11,7 +12,6 @@ import {formatBytes, baseNameFor, uniqueName, escapeHtml} from './util.js';
 // once; board writes stay sequential so items land in a predictable order.
 const CONCURRENCY = 3;
 const MAX_ITEMS = 200;
-const PREFS_KEY = 'miro-image-convert:prefs';
 
 const el = {
   format: document.getElementById('format'),
@@ -37,30 +37,17 @@ let job = null; // { token: { cancelled } } while a run is in flight
 
 const radioValue = (name) => document.querySelector(`input[name="${name}"]:checked`).value;
 
-function loadPrefs() {
-  try {
-    return JSON.parse(localStorage.getItem(PREFS_KEY)) || {};
-  } catch {
-    return {};
-  }
-}
-
+// Persisted so the one-click context-menu actions, which have no UI, can
+// reuse the same settings.
 function savePrefs() {
-  try {
-    localStorage.setItem(
-      PREFS_KEY,
-      JSON.stringify({
-        format: el.format.value,
-        quality: el.quality.value,
-        background: el.background.value,
-        maxEdge: el.maxEdge.value,
-        placement: radioValue('placement'),
-        source: radioValue('source'),
-      }),
-    );
-  } catch {
-    /* storage unavailable in this frame; preferences just will not persist */
-  }
+  persistPrefs({
+    format: el.format.value,
+    quality: el.quality.value,
+    background: el.background.value,
+    maxEdge: el.maxEdge.value,
+    placement: radioValue('placement'),
+    source: radioValue('source'),
+  });
 }
 
 function currentOptions() {
@@ -273,35 +260,20 @@ async function run(mode) {
 }
 
 async function writeToBoard(succeeded, options, token, rows) {
-  const placement = radioValue('placement');
-  const created = [];
-  let written = 0;
   setProgress(0, succeeded.length, 'Adding to board');
 
-  if (placement === 'frame') {
-    const {created: frameItems} = await placeInFrame(
-      succeeded.map(({result, fileName}) => ({result, fileName})),
-      options.format,
-      succeeded.map(({item}) => item),
-    );
-    created.push(...frameItems);
-    written = succeeded.length;
-    setProgress(written, succeeded.length, 'Adding to board');
-  } else {
-    for (const entry of succeeded) {
-      if (token.cancelled) break;
-      try {
-        created.push(...(await placeBelowOriginal(entry.item, entry.result, options.format, entry.fileName)));
-        written++;
-      } catch (error) {
-        const row = rows.find((r) => r.name === entry.fileName);
-        if (row) {
-          row.ok = false;
-          row.detail = error.message;
-        }
-      }
-      entry.result.blob = null; // let the encoded bytes be collected
-      setProgress(written, succeeded.length, 'Adding to board');
+  const {created, written, failures} = await writeConverted(
+    succeeded,
+    options.format,
+    radioValue('placement'),
+    {token, onProgress: (done, total) => setProgress(done, total, 'Adding to board')},
+  );
+
+  for (const failure of failures) {
+    const row = rows.find((r) => r.name === failure.fileName);
+    if (row) {
+      row.ok = false;
+      row.detail = failure.message;
     }
   }
 
