@@ -1,11 +1,27 @@
 /* Class names here are deliberately distinct from Mirotone's own components
    (.label, .radio, .form-group) so the two stylesheets cannot fight. */
 
+/* The panel is an iframe the host sizes and whose document scrolling it
+   suppresses, so relying on the document to scroll leaves the bottom of a long
+   results list unreachable by wheel or trackpad. Constrain the panel to the
+   frame height and let it scroll its own overflow instead. */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
 .panel {
+  height: 100%;
   padding: 16px;
   box-sizing: border-box;
   max-width: 100%;
   overflow-x: hidden;
+  overflow-y: auto;
+  /* Don't hand the scroll on to the board once the panel hits its end. */
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .muted {
