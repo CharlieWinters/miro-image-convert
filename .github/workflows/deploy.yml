@@ -3,6 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -10,6 +11,8 @@ permissions:
   pages: write
   id-token: write
 
+# Never let two deploys race; a half-applied deploy is a broken app for
+# everyone who has it installed.
 concurrency:
   group: pages
   cancel-in-progress: true
@@ -25,12 +28,27 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-      - uses: actions/configure-pages@v5
+      # The app is loaded live by every board that has it installed, so fail
+      # the build rather than publish an entry point that cannot work.
+      - name: Check the built entry points
+        run: |
+          set -euo pipefail
+          for surface in index panel; do
+            test -f "dist/$surface.html"
+            test -f "dist/assets/$surface.js"
+            grep -q "assets/$surface.js" "dist/$surface.html"
+          done
+          # index.html is the sdkUri: without this the toolbar icon does nothing.
+          grep -q "icon:click" dist/assets/index.js
+          # The panel must keep its stylesheet and the SDK bootstrap.
+          test -f dist/assets/panel.css
+          grep -q "miro.js" dist/panel.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
   deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     environment:
