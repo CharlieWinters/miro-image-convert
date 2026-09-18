@@ -13,3 +13,7 @@ sdkUri: "https://charliewinters.github.io/miro-image-convert/"
 scopes:
   - boards:read
   - boards:write
+icons:
+  # outline is the monochrome toolbar icon; Miro recolours it to indigo.
+  outline: "https://charliewinters.github.io/miro-image-convert/icon-outline.svg"
+  colored: "https://charliewinters.github.io/miro-image-convert/icon-color.svg"

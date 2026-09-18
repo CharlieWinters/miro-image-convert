@@ -77,6 +77,39 @@ That URL is the **App URL / `sdkUri`** to register in the Developer Dashboard
 (with scopes `boards:read` and `boards:write`). Pages is fine for hosting a
 Miro app; only Marketplace submission requires somewhere else.
 
+## Install on a Miro team
+
+Installation URL (Developer Dashboard → **Share app**):
+
+```
+https://miro.com/app-install/?response_type=code&client_id=3458764684173420605&redirect_uri=%2Fapp-install%2Fconfirm%2F
+```
+
+Open it while signed in to Miro, choose the team to install onto, and confirm.
+The app icon then appears in that team's board toolbar. The `client_id` in that
+URL is the app's public client ID — it is not the client secret, which never
+leaves the Developer Dashboard.
+
+To install on another team, open the same link again and pick a different team.
+
+## App icons
+
+Two SVGs in `public/`, served from the Pages deployment alongside the app:
+
+| File | Used for | Notes |
+|---|---|---|
+| `icon-outline.svg` | Board toolbar | 24x24, monochrome (`#050038`), no gradients — Miro recolours it to indigo |
+| `icon-color.svg` | Panel header and Marketplace | 32x32, full colour |
+
+Both follow [Miro's icon guidelines](https://developers.miro.com/docs/add-a-logo-to-your-app#check-the-app-icon-guidelines):
+SVG, square, non-empty and under 5000 bytes (these are ~450 and ~630 bytes),
+and the monochrome one uses exactly one colour with no gradients.
+
+They share one glyph — a picture tile with an arrow leaving it — so the toolbar
+and panel read as the same app. The colour version deliberately repeats that
+composition rather than showing a richer source-to-target scene: it is rendered
+at around 32px in the panel, where extra detail turns to mush.
+
 ## Install (development)
 
 1. `npm install`
