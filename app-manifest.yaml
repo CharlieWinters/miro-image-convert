@@ -1,0 +1,9 @@
+# Paste this into the Developer Dashboard (the dashboard is authoritative).
+# Set sdkUri to http://localhost:3000 while developing, then to the deployed
+# URL. The app only reads and writes board items; nothing leaves the browser.
+appName: Image Format Converter
+sdkVersion: SDK_V2
+sdkUri: "http://localhost:3000"
+scopes:
+  - boards:read
+  - boards:write

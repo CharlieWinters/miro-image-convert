@@ -1,0 +1,166 @@
+/* Class names here are deliberately distinct from Mirotone's own components
+   (.label, .radio, .form-group) so the two stylesheets cannot fight. */
+
+.panel {
+  padding: 16px;
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.muted {
+  color: #585858;
+}
+
+.intro {
+  margin: 0 0 20px;
+}
+
+.field {
+  margin-bottom: 20px;
+}
+
+.field-label {
+  display: block;
+  height: auto;
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: normal;
+  text-transform: none;
+  color: #1a1a1a;
+}
+
+.hint {
+  margin: 6px 0 0;
+}
+
+.opt {
+  display: flex;
+  align-items: center;
+  margin: 6px 0;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.opt input {
+  width: auto;
+  margin: 0 8px 0 0;
+  flex: 0 0 auto;
+}
+
+/* Mirotone sizes these for wider surfaces; keep them inside the panel. */
+#format,
+#max-edge {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+#quality {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+#background {
+  width: 56px;
+  height: 32px;
+  padding: 2px;
+  box-sizing: border-box;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.actions .button {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+}
+
+.bar {
+  height: 4px;
+  background: #e6e6e6;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  width: 0;
+  background: #4262ff;
+  transition: width 120ms linear;
+}
+
+.progress-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 8px 0 12px;
+}
+
+.progress-row .button {
+  margin: 0;
+}
+
+#downloads:not(:empty) {
+  margin-bottom: 16px;
+}
+
+.dl {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0 0 6px;
+  text-align: center;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.summary {
+  margin: 4px 0 8px;
+  font-weight: 600;
+}
+
+.result {
+  display: flex;
+  gap: 8px;
+  padding: 6px 0;
+  border-top: 1px solid #f0f0f0;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.result .dot {
+  flex: 0 0 auto;
+}
+
+.result.err .dot {
+  color: #dc2626;
+}
+
+.result.ok .dot {
+  color: #12805c;
+}
+
+.result .body {
+  min-width: 0;
+  word-break: break-word;
+}
+
+.result .name {
+  font-weight: 600;
+}

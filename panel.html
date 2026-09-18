@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://miro.com/app/static/sdk/v2/miro.js"></script>
+    <title>Image Format Converter</title>
+  </head>
+  <body>
+    <div class="panel">
+      <h3 class="h3">Image format converter</h3>
+      <p class="p-small muted intro">
+        Re-encode board images into another format. Originals are always kept.
+      </p>
+
+      <div class="field">
+        <span class="field-label">Images to convert</span>
+        <label class="opt"
+          ><input type="radio" name="source" value="selection" checked /><span
+            >Selected images</span
+          ></label
+        >
+        <label class="opt"
+          ><input type="radio" name="source" value="board" /><span
+            >All images on the board</span
+          ></label
+        >
+        <p class="p-small muted hint" id="source-count">Checking selection…</p>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="format">Convert to</label>
+        <select class="select" id="format"></select>
+        <p class="p-small muted hint" id="format-note"></p>
+      </div>
+
+      <div class="field" id="quality-group">
+        <label class="field-label" for="quality">Quality <span id="quality-value">0.85</span></label>
+        <input type="range" id="quality" min="0.3" max="1" step="0.05" value="0.85" />
+      </div>
+
+      <div class="field" id="background-group">
+        <span class="field-label">Background behind transparency</span>
+        <input type="color" id="background" value="#ffffff" />
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="max-edge">Resize longest edge (optional)</label>
+        <input class="input" type="number" id="max-edge" min="16" step="1" placeholder="Keep original pixel size" />
+      </div>
+
+      <div class="field">
+        <span class="field-label">Placement when adding to the board</span>
+        <label class="opt"
+          ><input type="radio" name="placement" value="below" checked /><span
+            >Below each original</span
+          ></label
+        >
+        <label class="opt"
+          ><input type="radio" name="placement" value="frame" /><span
+            >Together in a new frame</span
+          ></label
+        >
+      </div>
+
+      <div class="actions">
+        <button class="button button-primary" id="to-board" type="button">Add to board</button>
+        <button class="button button-secondary" id="to-download" type="button">Download</button>
+      </div>
+
+      <div id="progress" hidden>
+        <div class="bar"><div class="bar-fill" id="bar-fill"></div></div>
+        <div class="progress-row">
+          <span class="p-small" id="progress-label"></span>
+          <button class="button button-small button-secondary" id="cancel" type="button">
+            Cancel
+          </button>
+        </div>
+      </div>
+
+      <div id="downloads"></div>
+      <div id="results"></div>
+    </div>
+
+    <script type="module" src="/src/panel.js"></script>
+  </body>
+</html>
